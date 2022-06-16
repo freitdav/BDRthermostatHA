@@ -26,7 +26,7 @@ Pairing code can be get from the thermostat device or from the Smart TC app.
 Integration will create a climate entity and several sensor entities. It will look like this in Lovelace dashboard:
 ![](https://github.com/freitdav/BDRthermostatHA/blob/main/pictures/dashboard.PNG?raw=true)
 
-I used following YAML code:
+I used following YAML code for the dashboard card:
 ```yaml
 square: false
 columns: 1
