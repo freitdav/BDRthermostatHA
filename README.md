@@ -12,9 +12,11 @@ If you are not using HACS, you must copy `bdr_thermostat` into your `custom_comp
 
 ## Configuration
 Configuration via integration is recommended. Add an instance of `BDR Thermostat` using the UI:
+
 ![](https://github.com/freitdav/BDRthermostatHA/blob/main/pictures/integration.PNG?raw=true)
 
 And follow the steps:
+
 ![](https://github.com/freitdav/BDRthermostatHA/blob/main/pictures/setup.PNG?raw=true)
 
 
