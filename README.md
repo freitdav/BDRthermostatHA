@@ -15,7 +15,7 @@ Configuration via integration is recommended. Add an instance of `BDR Thermostat
 ![](https://github.com/freitdav/BDRthermostatHA/blob/main/pictures/integration.PNG?raw=true)
 
 And follow the steps:
-![](https://github.com/vipial1/BAXI_thermostat/blob/main/images/configuration.png?raw=true)
+![](https://github.com/freitdav/BDRthermostatHA/blob/main/pictures/setup.PNG?raw=true)
 
 
 Is it also possible to configure manually, but then, only entities will be created (not device).
