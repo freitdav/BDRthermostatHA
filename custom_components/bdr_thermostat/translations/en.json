@@ -1,0 +1,17 @@
+{
+    "config": {
+        "title": "BDR Thermea thermostat",
+        "step": {
+            "user": {
+                "title": "BDR Thermea thermostat - configuration",
+                "description": "Set configuration parameters as in your Smart TC app. See documentation at https://github.com/freitdav/BDRthermostatHA",
+                "data": {
+                    "name": "Thermostat name",
+                    "username": "Email or username",
+                    "password": "Password",
+                    "pairing_code": "Pairing code"
+                }
+            }
+        }
+    }
+}
