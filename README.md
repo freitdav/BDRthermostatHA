@@ -20,22 +20,37 @@ And follow the steps:
 ![](https://github.com/freitdav/BDRthermostatHA/blob/main/pictures/setup.PNG?raw=true)
 
 
-Is it also possible to configure manually, but then, only entities will be created (not device).
-```yaml
-climate:
-  - platform: bdr_thermostat
-    name: My BDR Thermostat
-    username: <your username>
-    password: <your password>
-    pairing_code: <your paring code>
-```
-Pairing code can be get from the thermostat device or from the Smart TC app, under:
-```Settings > Connected devices and services > Invite someone```
+Pairing code can be get from the thermostat device or from the Smart TC app.
 
 ## Screenshot
-Integration will create a climate entity, that will look like this in Lovelace:
-![](https://github.com/vipial1/BAXI_thermostat/blob/main/images/climate.png?raw=true)
+Integration will create a climate entity and several sensor entities. It will look like this in Lovelace dashboard:
+![](https://github.com/freitdav/BDRthermostatHA/blob/main/pictures/dashboard.PNG?raw=true)
 
+I used following YAML code:
+```yaml
+square: false
+columns: 1
+type: grid
+cards:
+  - cards:
+      - entity: climate.bdr_thermostat
+        type: thermostat
+        name: Termostat
+      - type: entities
+        entities:
+          - entity: sensor.bdr_thermostat_outside_temperature
+            name: Venkovní teplota
+          - entity: sensor.bdr_thermostat_status
+            name: Stav
+          - entity: sensor.bdr_thermostat_water_pressure
+            name: Tlak vody
+          - entity: sensor.bdr_thermostat_water_temperature
+            name: Teplota vody
+          - entity: sensor.bdr_thermostat_errors
+            name: Chyby
+        state_color: true
+    type: vertical-stack
+```
 
 ## Disclaimer
 - The code is buggy and integration needs to be reloaded regularly
