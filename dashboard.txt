@@ -1,0 +1,22 @@
+square: false
+columns: 1
+type: grid
+cards:
+  - cards:
+      - entity: climate.bdr_thermostat
+        type: thermostat
+        name: Termostat
+      - type: entities
+        entities:
+          - entity: sensor.bdr_thermostat_outside_temperature
+            name: Venkovní teplota
+          - entity: sensor.bdr_thermostat_status
+            name: Stav
+          - entity: sensor.bdr_thermostat_water_pressure
+            name: Tlak vody
+          - entity: sensor.bdr_thermostat_water_temperature
+            name: Teplota vody
+          - entity: sensor.bdr_thermostat_errors
+            name: Chyby
+        state_color: true
+    type: vertical-stack
