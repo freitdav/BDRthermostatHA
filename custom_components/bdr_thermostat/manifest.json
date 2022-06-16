@@ -1,0 +1,16 @@
+{
+  "domain": "bdr_thermostat",
+  "name": "BDR Thermostat",
+  "config_flow": true,
+  "documentation": "https://github.com/freitdav/BDRthermostatHA",
+  "requirements": [],
+  "ssdp": [],
+  "zeroconf": [],
+  "homekit": {},
+  "dependencies": [],
+  "codeowners": [
+    "@vipial1", "@freitdav"
+  ],
+  "iot_class": "cloud_polling",
+  "version": "1.0"
+}
