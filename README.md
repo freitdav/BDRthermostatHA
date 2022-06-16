@@ -42,3 +42,4 @@ Integration will create a climate entity, that will look like this in Lovelace:
 
 ## Thanks to
 - [Domaray](https://community.home-assistant.io/u/Domaray) and [ibernat](https://community.home-assistant.io/u/ibernat) for providing most of the API calls
+- [vipial1](https://raw.githubusercontent.com/vipial1/) credits for the core code
