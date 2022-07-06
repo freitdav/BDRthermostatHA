@@ -21,18 +21,18 @@ class BdrAPI:
         "Authorization": "Basic cnVhcHA6V25AW1tjJF1QfjghM2AoW35BZiUnSDI/bEh3XWNpaXE6cn1MT3pqTGsueTVNSCtfcT0=",
     }
     endpoints = {
-        "LOGIN": "https://remoteapp.bdrthermea.com/user/baxi/login",
         "PAIR": BASE_URL + "/pairings",
         "CONNECTION": BASE_URL + "/system/gateway/connection",
         "CAPABILITIES": BASE_URL + "/capabilities",
     }
     capabilities = {}
 
-    def __init__(self, hass, user, password, pairing_code):
+    def __init__(self, hass, user, password, pairing_code, brand: str):
         self.hass_storage = hass.helpers.storage.Store(
             STORAGE_VERSION, STORAGE_KEY, private=True, atomic_writes=True
         )
         self.hass = hass
+        self._brand = brand
         self._bootstraped = False
         self._user = user
         self._password = password
@@ -61,7 +61,8 @@ class BdrAPI:
         self.token = token
 
     async def _login(self):
-        api_endpoint = self.endpoints["LOGIN"]
+        api_endpoint = f"https://remoteapp.bdrthermea.com/user/{self._brand}/login",
+
         payload = {
             "username": self._user,
             "password": self._password,
@@ -77,7 +78,7 @@ class BdrAPI:
         api_endpoint = self.endpoints["PAIR"]
         payload = {
             "account": self._user,
-            "brand": "bdr",
+            "brand": self._brand,
             "password": self._password,
             "device": "HomeAssistant",
             "otp": self._pairing_code,

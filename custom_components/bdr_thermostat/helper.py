@@ -1,4 +1,5 @@
 from homeassistant.config_entries import ConfigEntry
+
 from .const import (
     PLATFORM,
     PRESET_MODE_HOLIDAY,
@@ -10,6 +11,7 @@ from .const import (
     PRESET_MODE_ANTIFROST,
     BDR_PRESET_MANUAL,
     BDR_PRESET_SCHEDULE,
+    BDR_PRESET_MODE,
 )
 from homeassistant.components.climate.const import (
     HVAC_MODE_OFF,
@@ -17,6 +19,9 @@ from homeassistant.components.climate.const import (
 )
 import datetime
 from datetime import timedelta
+import logging
+
+_LOGGER = logging.getLogger(__name__)
 
 
 def preset_mode_bdr_to_ha(bdr_mode, program=None):
@@ -38,15 +43,21 @@ def preset_mode_bdr_to_ha(bdr_mode, program=None):
 
 
 def preset_mode_ha_to_bdr(ha_mode):
-    if ha_mode == PRESET_MODE_MANUAL:
-        return BDR_PRESET_MANUAL, "manual"
-    elif ha_mode == PRESET_MODE_SCHEDULE_1:
+
+    _LOGGER.info(f"{ha_mode=}")
+
+    if ha_mode == PRESET_MODE_SCHEDULE_1:
         return BDR_PRESET_SCHEDULE, "1"
     elif ha_mode == PRESET_MODE_SCHEDULE_2:
         return BDR_PRESET_SCHEDULE, "2"
     elif ha_mode == PRESET_MODE_SCHEDULE_3:
         return BDR_PRESET_SCHEDULE, "3"
+    elif ha_mode == PRESET_MODE_HOLIDAY:
+        return BDR_PRESET_MODE, "holiday",
+    elif ha_mode == PRESET_MODE_ANTIFROST:
+        return BDR_PRESET_MODE, "anti-frost",
 
+    return BDR_PRESET_MANUAL, "manual"
 
 def hvac_mode_bdr_to_ha(raw_mode):
     if raw_mode == "off":
