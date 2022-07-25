@@ -144,11 +144,20 @@ class BdrThermostat(ClimateEntity, RestoreEntity):
         await self.async_update_ha_state()
 
     async def async_set_preset_mode(self, preset_mode):
-        bdr_preset_mode, program = self._attr_preset_mode = preset_mode_ha_to_bdr(
+        _LOGGER.error(f"{preset_mode=}")
+        bdr_preset_mode, program = preset_mode_ha_to_bdr(
             preset_mode
         )
-        if bdr_preset_mode == bdr_PRESET_SCHEDULE:
+
+        self._attr_preset_mode = preset_mode
+
+        # Set a schedule
+        if bdr_preset_mode == BDR_PRESET_SCHEDULE:
             await self._bdr_api.set_schedule(program)
-        elif bdr_preset_mode == bdr_PRESET_MANUAL:
+        # Set a manual temperature
+        elif bdr_preset_mode == BDR_PRESET_MANUAL:
             await self._bdr_api.set_target_temperature(self._attr_target_temperature)
+        elif bdr_preset_mode == BDR_PRESET_MODE:
+            await self._bdr_api.set_operating_mode(mode=program)
+
         await self.async_update_ha_state()

@@ -10,6 +10,7 @@ from .const import (
 )
 
 CONF_PAIR_CODE = "pairing_code"
+CONF_BRAND = "brand"
 
 
 SUPPORT_FLAGS = SUPPORT_TARGET_TEMPERATURE | SUPPORT_PRESET_MODE
@@ -17,5 +18,7 @@ CLIMATE_SCHEMA = {
     vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
     vol.Required(CONF_USERNAME): cv.string,
     vol.Required(CONF_PASSWORD): cv.string,
-    vol.Required(CONF_PAIR_CODE): cv.string,
-}
+    vol.Required(
+        CONF_BRAND,
+        default="baxi",
+    ): vol.In(["baxi", "remeha"])}
