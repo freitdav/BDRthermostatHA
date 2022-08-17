@@ -18,6 +18,7 @@ CLIMATE_SCHEMA = {
     vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
     vol.Required(CONF_USERNAME): cv.string,
     vol.Required(CONF_PASSWORD): cv.string,
+    vol.Required(CONF_PAIR_CODE): cv.string,
     vol.Required(
         CONF_BRAND,
         default="baxi",

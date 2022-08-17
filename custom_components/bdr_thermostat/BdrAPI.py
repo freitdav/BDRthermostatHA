@@ -61,7 +61,7 @@ class BdrAPI:
         self.token = token
 
     async def _login(self):
-        api_endpoint = f"https://remoteapp.bdrthermea.com/user/{self._brand}/login",
+        api_endpoint = f"https://remoteapp.bdrthermea.com/user/{self._brand}/login"
 
         payload = {
             "username": self._user,
