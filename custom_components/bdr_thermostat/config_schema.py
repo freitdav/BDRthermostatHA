@@ -22,4 +22,4 @@ CLIMATE_SCHEMA = {
     vol.Required(
         CONF_BRAND,
         default="baxi",
-    ): vol.In(["baxi", "remeha"])}
+    ): vol.In(["baxi", "remeha", "dedietrich"])}
