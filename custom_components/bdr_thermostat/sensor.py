@@ -206,7 +206,7 @@ class OutsideTemperatureSensor(SensorEntity):
     
         status = await self._bdr_api.get_status()
 
-        if status:
+        if status and status.get("outsideTemperature"):
             self._attr_native_value = status["outsideTemperature"]["value"]          
             self._attr_native_unit_of_measurement = status["outsideTemperature"]["unit"]
      
