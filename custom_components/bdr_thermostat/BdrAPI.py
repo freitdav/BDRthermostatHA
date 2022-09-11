@@ -192,7 +192,10 @@ class BdrAPI:
         return self._bootstraped
 
     async def get_status(self):
-        api_endpoint = self.capabilities["centralHeatingZones"]["statusUri"]
+        if self.capabilities["centralHeatingZones"].get("statusUri"):
+            api_endpoint = self.capabilities["centralHeatingZones"]["statusUri"]
+        else:
+            api_endpoint = self.capabilities["centralHeatingZones"]["uri"] + "/status"
 
         return await self.async_get_request(api_endpoint)
 
