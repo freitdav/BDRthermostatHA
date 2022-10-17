@@ -43,8 +43,11 @@ async def async_setup_platform(
         config.get(CONF_NAME),
     )
     await async_setup_reload_service(hass, DOMAIN, PLATFORM)
+
+    api = hass.data[PLATFORM].get(DATA_KEY_API)
     async_add_entities(
-        [BdrThermostat(hass, config)],
+        # Add new BdrThermostat climate by Zones
+        [BdrThermostat(hass, config, zone_name) for zone_name in api.get_zones()],
         update_before_add=True,
     )
 
@@ -52,8 +55,14 @@ async def async_setup_platform(
 async def async_setup_entry(hass, config_entry, async_add_devices):
     """Add BdrThermostat entities from user config"""
     await async_setup_reload_service(hass, DOMAIN, PLATFORM)
+
+    api = hass.data[PLATFORM].get(DATA_KEY_API)
     async_add_devices(
-        [BdrThermostat(hass, config_entry.data)],
+        # Add new BdrThermostat climate by Zones
+        [
+            BdrThermostat(hass, config_entry.data, zone_name)
+            for zone_name in api.get_zones()
+        ],
         update_before_add=True,
     )
 
@@ -61,13 +70,13 @@ async def async_setup_entry(hass, config_entry, async_add_devices):
 class BdrThermostat(ClimateEntity, RestoreEntity):
     """BdrThermostat"""
 
-    def __init__(self, hass, config):
+    def __init__(self, hass, config, zone_name):
         """Initialize the thermostat."""
         super().__init__()
         self.hass = hass
         self._bdr_api = hass.data[PLATFORM].get(DATA_KEY_API)
-        self._attr_name = config.get(CONF_NAME)
-        self._attr_unique_id = config.get(CONF_NAME)
+        self._attr_name = "BDR - " + zone_name
+        self._attr_unique_id = zone_name
         self._attr_supported_features = SUPPORT_FLAGS
         self._attr_preset_modes = PRESET_MODES
         self._attr_hvac_modes = (
@@ -93,24 +102,33 @@ class BdrThermostat(ClimateEntity, RestoreEntity):
         return self._bdr_api.is_bootstraped()
 
     async def async_update(self):
-        status = await self._bdr_api.get_status()
+        status = await self._bdr_api.get_status(self._attr_unique_id)
+        _LOGGER.error(status)
 
         if status:
             self._attr_current_temperature = status["roomTemperature"]["value"]
             self._attr_temperature_unit = status["roomTemperature"]["unit"]
-            self._attr_target_temperature = status["roomTemperatureSetpoint"]["value"]
+            self._attr_target_temperature = status.get("roomTemperatureSetpoint").get(
+                "value"
+            )
             self._attr_preset_mode = preset_mode_bdr_to_ha(
                 status["mode"], status["timeProgram"]
             )
             next_switch = status.get("nextSwitch", None)
             if next_switch:
-                self._attr_extra_state_attributes["next_change"] = next_switch["time"]
-                self._attr_extra_state_attributes["next_temp"] = next_switch[
-                    "roomTemperatureSetpoint"
-                ]["value"]
-                self.next_switch_days = next_switch[
-                    "dayOffset"
-                ]  # we just need to store this
+                # Try/Exception because the API is not always returning next_temp values
+                try:
+                    self._attr_extra_state_attributes["next_change"] = next_switch[
+                        "time"
+                    ]
+                    self._attr_extra_state_attributes["next_temp"] = next_switch[
+                        "roomTemperatureSetpoint"
+                    ]["value"]
+                    self.next_switch_days = next_switch[
+                        "dayOffset"
+                    ]  # we just need to store this
+                except Exception:
+                    pass
             else:
                 self._attr_extra_state_attributes.pop("next_change", None)
                 self._attr_extra_state_attributes.pop("next_temp", None)
@@ -132,10 +150,14 @@ class BdrThermostat(ClimateEntity, RestoreEntity):
         if next_change:
             # We are in scheduled mode, need to create a temporary override
             override_date = create_override_date(next_change, self.next_switch_days)
-            await self._bdr_api.set_override_temperature(temperature, override_date)
+            await self._bdr_api.set_override_temperature(
+                temperature, override_date, self._attr_unique_id
+            )
         else:
             # Manual mode, it is fine to modify the temp
-            await self._bdr_api.set_target_temperature(temperature)
+            await self._bdr_api.set_target_temperature(
+                temperature, self._attr_unique_id
+            )
         await self.async_update_ha_state()
 
     async def async_set_hvac_mode(self, hvac_mode):
@@ -145,18 +167,18 @@ class BdrThermostat(ClimateEntity, RestoreEntity):
 
     async def async_set_preset_mode(self, preset_mode):
         _LOGGER.error(f"{preset_mode=}")
-        bdr_preset_mode, program = preset_mode_ha_to_bdr(
-            preset_mode
-        )
+        bdr_preset_mode, program = preset_mode_ha_to_bdr(preset_mode)
 
         self._attr_preset_mode = preset_mode
 
         # Set a schedule
         if bdr_preset_mode == BDR_PRESET_SCHEDULE:
-            await self._bdr_api.set_schedule(program)
+            await self._bdr_api.set_schedule(program, self._attr_unique_id)
         # Set a manual temperature
         elif bdr_preset_mode == BDR_PRESET_MANUAL:
-            await self._bdr_api.set_target_temperature(self._attr_target_temperature)
+            await self._bdr_api.set_target_temperature(
+                self._attr_target_temperature, self._attr_unique_id
+            )
         elif bdr_preset_mode == BDR_PRESET_MODE:
             await self._bdr_api.set_operating_mode(mode=program)
 
