@@ -236,8 +236,11 @@ class BdrAPI:
 
     async def get_water_pressure(self):
         api_endpoint = self.capabilities["system"]["waterPressureUri"]
-
-        return await self.async_get_request(api_endpoint)
+        try :
+            toreturn = await self.async_get_request(api_endpoint)
+        except :
+            return None
+        return toreturn
     
     async def get_errors(self):
         api_endpoint = self.capabilities["system"]["errorStatusUri"]

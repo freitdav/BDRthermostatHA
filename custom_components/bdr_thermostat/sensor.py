@@ -96,7 +96,10 @@ class WaterPressureSensor(SensorEntity):
     @property
     def available(self) -> bool:
         """Return True if entity is available."""
-        return self._bdr_api.is_bootstraped()
+        if self._attr_native_unit_of_measurement == "" :
+            return False
+        else :
+            return self._bdr_api.is_bootstraped()
 
     async def async_update(self):
     
