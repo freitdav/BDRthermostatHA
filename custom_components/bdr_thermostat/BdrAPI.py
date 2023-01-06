@@ -151,14 +151,31 @@ class BdrAPI:
         capabilities = await self.async_get_request(api_endpoint)
 
         for subsystem_name, subsystem in capabilities.items():
-            if isinstance(subsystem, list):
-                if len(subsystem) > 0:
-                    subsystem = subsystem[0]
+            api_endpoint = self.endpoints["CAPABILITIES"]
+
+            capabilities = await self.async_get_request(api_endpoint)
+
+            for subsystem_name, subsystem in capabilities.items():
+                self.capabilities[subsystem_name] = {}
+
+                # Looping through zones of centralHeatingZones
+                if subsystem_name == "centralHeatingZones" and isinstance(subsystem, list):
+                    for zone in subsystem:
+                        zone_name = zone["name"]
+                        self.capabilities["centralHeatingZones"][zone_name] = {}
+                        for function, uri in zone.items():
+                            self.capabilities["centralHeatingZones"][zone_name][
+                                function
+                            ] = self.BASE_URL + str(uri)
+
                 else:
-                    continue
-            self.capabilities[subsystem_name] = {}
-            for function, uri in subsystem.items():
-                self.capabilities[subsystem_name][function] = self.BASE_URL + str(uri)
+                    if isinstance(subsystem, list) and len(subsystem) > 0:
+                        subsystem = subsystem[0]
+
+                    for function, uri in subsystem.items():
+                        self.capabilities[subsystem_name][function] = self.BASE_URL + str(
+                            uri
+                        )
 
     def is_feature_enabled(self, feature):
         if feature == FEATURE_OPERATING_MODE:
@@ -191,20 +208,29 @@ class BdrAPI:
     def is_bootstraped(self):
         return self._bootstraped
 
-    async def get_status(self):
-        api_endpoint = self.capabilities["centralHeatingZones"]["statusUri"]
+    async def get_status(self, zone_name=None):
+        # If we don't pass the zone name, we take the first one
+        if not zone_name:
+            zone_name = list(self.capabilities["centralHeatingZones"].keys())[0]
+
+        api_endpoint = self.capabilities["centralHeatingZones"][zone_name]["statusUri"]
 
         return await self.async_get_request(api_endpoint)
 
-    async def set_target_temperature(self, target_temp):
-        api_endpoint = self.capabilities["centralHeatingZones"]["putSetpointManualUri"]
+    def get_zones(self):
+        return list(self.capabilities["centralHeatingZones"].keys())
+
+    async def set_target_temperature(self, target_temp, zone_name):
+        api_endpoint = self.capabilities["centralHeatingZones"][zone_name][
+            "putSetpointManualUri"
+        ]
         payload = {
             "roomTemperatureSetpoint": target_temp,
         }
         return await self.async_put_request(api_endpoint, payload)
 
-    async def set_override_temperature(self, target_temp, override_end):
-        api_endpoint = self.capabilities["centralHeatingZones"][
+    async def set_override_temperature(self, target_temp, override_end, zone_name):
+        api_endpoint = self.capabilities["centralHeatingZones"][zone_name][
             "putSetpointTemporaryOverrideUri"
         ]
         payload = {
@@ -213,8 +239,8 @@ class BdrAPI:
         }
         return await self.async_put_request(api_endpoint, payload)
 
-    async def set_schedule(self, schedule_program):
-        api_endpoint = self.capabilities["centralHeatingZones"][
+    async def set_schedule(self, schedule_program, zone_name):
+        api_endpoint = self.capabilities["centralHeatingZones"][zone_name][
             "putSetpointScheduleUri"
         ]
         payload = {
@@ -238,7 +264,7 @@ class BdrAPI:
         api_endpoint = self.capabilities["system"]["waterPressureUri"]
 
         return await self.async_get_request(api_endpoint)
-    
+
     async def get_errors(self):
         api_endpoint = self.capabilities["system"]["errorStatusUri"]
 
