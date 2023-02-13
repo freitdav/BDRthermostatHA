@@ -1,9 +1,9 @@
 # BDRthermostatHA
-BDR (Baxi, De Dietrich, Remeha) thermostat custom integration for Home Assistant
+BDR (Baxi, De Dietrich, ~~Remeha~~) thermostat custom integration for Home Assistant
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg?style=for-the-badge)](https://github.com/hacs/integration)
 
-This component provides custom integration with BDR Thermea branded thermostats. It was tested with Smart TC app and De Dietrich devices. It does not work (or only limited functionalities) with Remeha eTwist App due to API differences. 
+This component provides custom integration with BDR Thermea branded thermostats. It was tested with Smart TC app and De Dietrich devices. **It does not work (or only limited functionalities) with Remeha eTwist App due to API differences and constant API changes**. 
 
 ## How to install
 You can use HACS to install this integration as custom repository
