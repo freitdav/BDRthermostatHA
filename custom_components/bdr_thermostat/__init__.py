@@ -59,8 +59,7 @@ async def async_setup_entry(hass, config_entry):
     await api.bootstrap()
     hass.data[PLATFORM] = {DATA_KEY_API: api, DATA_KEY_CONFIG: config_entry.data}
     register_device(hass, config_entry, api.get_device_information())
-    hass.config_entries.async_setup_platforms(config_entry, PLATFORMS)
-
+    await hass.config_entries.async_forward_entry_setups(config_entry, PLATFORMS)
     return True
 
 
