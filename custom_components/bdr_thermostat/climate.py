@@ -103,7 +103,7 @@ class BdrThermostat(ClimateEntity, RestoreEntity):
 
     async def async_update(self):
         status = await self._bdr_api.get_status(self._attr_unique_id)
-        _LOGGER.error(status)
+        _LOGGER.debug("Updating BDR status %s", status)
 
         if status:
             self._attr_current_temperature = status["roomTemperature"]["value"]
@@ -166,7 +166,7 @@ class BdrThermostat(ClimateEntity, RestoreEntity):
         await self.async_update_ha_state()
 
     async def async_set_preset_mode(self, preset_mode):
-        _LOGGER.error(f"{preset_mode=}")
+        _LOGGER.debug("Preset mode being set: %s", preset_mode)
         bdr_preset_mode, program = preset_mode_ha_to_bdr(preset_mode)
 
         self._attr_preset_mode = preset_mode
