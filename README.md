@@ -1,4 +1,10 @@
-# BDRthermostatHA
+# BDRthermostatHA [deprecated]
+
+## README !!!!
+Please note that due to API changes and De Dietrich's transition towards new Smart app, this integration is not working anymore or only with very limited functionality.
+I keep this repository public so anyone can follow up on my work in the future.
+
+
 BDR (Baxi, De Dietrich, ~~Remeha~~) thermostat custom integration for Home Assistant
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg?style=for-the-badge)](https://github.com/hacs/integration)
